@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Détection de poulets</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Détection de poulets par les images</h1>
+    <form action="{{ url_for('upload_image') }}" method="POST" enctype="multipart/form-data">
+        <input type="file" name="image" accept="image/*">
+        <input type="submit" value="Détecter les objets">
+    </form>
+
+   
+
+    <script>
+        function toggleCamera() {
+            var img = document.getElementById("camera");
+            var button = document.getElementById("toggleButton");
+            
+            if (img.style.display === "none") {
+                img.style.display = "block";
+                button.innerText = "Désactiver la caméra";
+            } else {
+                img.style.display = "none";
+                button.innerText = "Activer la caméra";
+            }
+        }
+    </script>
+
+
+<h1>YOLO v4 Détections en Temps Réel</h1>
+<img id="camera" src="{{ url_for('video_feed') }}" alt="YOLO v4 Détections en Temps Réel">
+<button id="toggleButton" onclick="toggleCamera()">Désactiver la caméra</button>
+
+
+</body>
+</html>
