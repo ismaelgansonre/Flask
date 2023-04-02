@@ -3,6 +3,7 @@ FROM ubuntu:18.04
 
 # Mettre à jour les packages et installer les dépendances
 RUN apt-get update && apt-get install -y \
+apt-get install -y libgl1-mesa-glx && \
     python3 \
     python3-pip \
     libgl1-mesa-glx
