@@ -1,27 +1,21 @@
-# Utiliser l'image de base Ubuntu 18.04
-FROM ubuntu:18.04
+# Utiliser une image de base Python
+FROM python:3.9
 
-# Mettre à jour les packages et installer les dépendances
-RUN apt-get update && apt-get install -y \
-apt-get install -y libgl1-mesa-glx && \
-    python3 \
-    python3-pip \
-    libgl1-mesa-glx
+# Mettre à jour les paquets et installer les dépendances système
+RUN apt-get update && \
+    apt-get install -y libgl1-mesa-glx && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
-# Copier les fichiers requirements.txt dans le conteneur
-COPY requirements.txt /app/requirements.txt
+# Copier les fichiers de l'application et installer les dépendances Python
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Installer les dépendances Python
-RUN pip3 install --no-cache-dir -r /app/requirements.txt
+# Copier le reste des fichiers de l'application
+COPY . .
 
-# Copier le reste de l'application dans le conteneur
-COPY . /app
-
-# Changer le répertoire de travail
-WORKDIR /app
-
-# Exposer le port sur lequel l'application va s'exécuter
+# Exposer le port sur lequel l'application sera accessible
 EXPOSE 8080
 
-# Lancer l'application avec Gunicorn
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8080", "app:app"]
+# Exécuter gunicorn
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--worker-tmp-dir", "/dev/shm", "app:app"]
