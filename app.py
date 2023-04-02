@@ -55,7 +55,7 @@ def detect_objects(image_BGR):
         blob = cv2.dnn.blobFromImage(image_BGR, 1 / 255.0, (416, 416),
                                         swapRB=True, crop=False)
         
-        with open('yolo-pou_mou-data\obj.names') as f:
+        with open('yolo-pou_mou-data/obj.names') as f:
             # Getting labels reading every line
             # and putting them into the list
             labels = [line.strip() for line in f]
