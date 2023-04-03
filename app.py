@@ -61,9 +61,11 @@ def detect_objects(image_BGR):
             # and putting them into the list
             labels = [line.strip() for line in f]
 
-        network = cv2.dnn.readNetFromDarknet('yolo-pou_mou-data/new_yolov4-custom.cfg',
-                                            'yolo-pou_mou-data/new_yolov4-custom_best.weights')
-        #new_yolov4-custom_best
+        config_file_path = os.path.join(base_dir, 'yolo-pou_mou-data', 'new_yolov4-custom.cfg')
+        weights_file_path = os.path.join(base_dir, 'yolo-pou_mou-data', 'new_yolov4-custom_best.weights')
+
+        network = cv2.dnn.readNetFromDarknet(config_file_path, weights_file_path)
+#new_yolov4-custom_best
         # Getting list with names of all layers from YOLO v4 network
         layers_names_all = network.getLayerNames()
 
@@ -221,6 +223,6 @@ def gen_frames():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, threaded=True,port=8080)
        
     

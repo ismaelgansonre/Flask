@@ -18,4 +18,4 @@ COPY . .
 EXPOSE 8080
 
 # Exécuter gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--worker-tmp-dir", "/dev/shm", "app:app"]
+CMD ["gunicorn", "--bind","--device=/dev/video0:/dev/video0", "0.0.0.0:8080", "--worker-tmp-dir", "/dev/shm", "app:app"]
