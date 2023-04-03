@@ -54,8 +54,9 @@ def detect_objects(image_BGR):
 
         blob = cv2.dnn.blobFromImage(image_BGR, 1 / 255.0, (416, 416),
                                         swapRB=True, crop=False)
-        
-        with open('yolo-pou_mou-data/obj.names') as f:
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        file_path = os.path.join(base_dir, 'yolo-pou_mou-data', 'obj.names')
+        with open(file_path) as f:
             # Getting labels reading every line
             # and putting them into the list
             labels = [line.strip() for line in f]
@@ -220,6 +221,6 @@ def gen_frames():
 
 
 if __name__ == '__main__':
-    app.run(debug=True,host='0.0.0.0')
+    app.run(debug=True)
        
     
