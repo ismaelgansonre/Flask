@@ -6,15 +6,18 @@ import tkinter as tk
 from tkinter import filedialog
 from PIL import Image, ImageTk
 
+from YoloCam import draw_boxes_and_labels, load_network, process_frame, read_labels
+
 class MainWindow(tk.Tk):
+    
     def __init__(self):
         super().__init__()
 
         self.title("Détection de poulets")
-        self.geometry("500x600")
+        self.geometry("700x800")
 
         self.image_frame = tk.Frame(self)
-        self.image_frame.pack(side=tk.TOP)
+        self.image_frame.pack(side=tk.TOP, pady=(50, 20), expand=True)
 
         self.label_image_original = tk.Label(self.image_frame)
         self.label_image_original.pack(side=tk.LEFT)
@@ -23,7 +26,7 @@ class MainWindow(tk.Tk):
         self.label_image_result.pack(side=tk.LEFT)
 
         self.button_frame = tk.Frame(self)
-        self.button_frame.pack(side=tk.TOP)
+        self.button_frame.pack(side=tk.TOP, anchor=tk.CENTER)
 
         self.button_load_image = tk.Button(self.button_frame, text="Charger une image", command=self.load_image)
         self.button_load_image.pack(side=tk.LEFT)
@@ -35,19 +38,23 @@ class MainWindow(tk.Tk):
         self.button_open_new_window.pack(side=tk.LEFT)
 
     def open_new_window(self):
-        self.new_window = NewWindow(self)
-        self.new_window.mainloop()
+      self.new_window = NewWindow(self)
+      self.new_window.protocol("WM_DELETE_WINDOW", self.new_window.onClose)
+      self.new_window.mainloop()
+
 
     def display_image_original(self, image):
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image_pil = Image.fromarray(image)
+        image_resized = cv2.resize(image, (400, 400))
+        image_pil = Image.fromarray(image_resized)
         image_tk = ImageTk.PhotoImage(image_pil, master=self.label_image_original)
         self.label_image_original.config(image=image_tk)
         self.label_image_original.image = image_tk
 
     def display_image_result(self, image):
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-        image_pil = Image.fromarray(image)
+        image_resized = cv2.resize(image, (400, 400))
+        image_pil = Image.fromarray(image_resized)
         image_tk = ImageTk.PhotoImage(image_pil)
         self.label_image_result.config(image=image_tk)
         self.label_image_result.image = image_tk
@@ -183,13 +190,68 @@ class MainWindow(tk.Tk):
 class NewWindow(tk.Toplevel):
     def __init__(self, parent=None):
         super(NewWindow, self).__init__(parent)
-
+        
         self.title("Nouvelle Fenêtre")
-        self.geometry("400x300")
+        self.geometry("800x600")
 
-        label = tk.Label(self, text="Ici, vous pouvez extraire et caractériser les objets.")
-        label.pack()
+        self.video_frame = tk.Frame(self)
+        self.video_frame.pack()
 
+        self.label_video = tk.Label(self.video_frame)
+        self.label_video.pack()
+        
+        self.label_nombre_poulets = tk.Label(self.video_frame, text="Nombre de poulets : 0")
+        self.label_nombre_poulets.pack(side=tk.TOP, anchor=tk.CENTER)
+        # Charger le réseau YOLO et ses paramètres
+        labels_path = 'yolo-pou_mou-data/obj.names'
+        config_path = 'yolo-pou_mou-data/new_yolov4-custom.cfg'
+        weights_path = 'yolo-pou_mou-data/new_yolov4-custom_best.weights'
+        self.labels = read_labels(labels_path)
+        self.network, self.layers_names_output = load_network(config_path, weights_path)
+
+        self.probability_minimum = 0.05
+        self.threshold = 0.5
+        self.colours = np.random.randint(0, 255, size=(len(self.labels), 3), dtype='uint8')
+
+        # Ouvrir la caméra
+        self.camera = cv2.VideoCapture(1)
+        # self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
+        # self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
+
+        self.update_video_frame()
+
+    def update_video_frame(self):
+        ret, frame = self.camera.read()
+        if ret:
+          results, bounding_boxes, confidences, class_numbers = process_frame(
+            frame, self.network, self.layers_names_output, self.probability_minimum, self.threshold)
+
+        frame, _ = draw_boxes_and_labels(
+            frame, results, bounding_boxes, confidences, class_numbers, self.labels, self.colours)
+
+        # Compter le nombre de poulets détectés
+        poulets = [class_num for class_num in class_numbers if self.labels[class_num] == "poulet"]
+        nombre_de_poulets = len(poulets)
+
+        # Ajouter le texte sur la vidéo
+        text_number_poulets = 'Nombre de poulets : {}'.format(nombre_de_poulets)
+        cv2.putText(frame, text_number_poulets, (50, 50),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
+
+        frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        frame_pil = Image.fromarray(frame)
+        frame_tk = ImageTk.PhotoImage(frame_pil)
+
+        self.label_video.config(image=frame_tk)
+        self.label_video.image = frame_tk
+        self.label_nombre_poulets.config(text="Nombre de poulets : {}".format(nombre_de_poulets))
+
+        self.after(30, self.update_video_frame)
+
+
+    def onClose(self):
+        self.cap.release()
+        self.destroy()
 if __name__ == '__main__':
     window = MainWindow()
     window.mainloop()
