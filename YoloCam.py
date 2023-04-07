@@ -69,18 +69,19 @@ def draw_boxes_and_labels(frame, results, bounding_boxes, confidences, class_num
 
             colour_box_current = colours[class_numbers[i]].tolist()
 
-            cv2.rectangle(frame, (x_min, y_min), (x_min + box_width, y_min + box_height), colour_box_current, 2)
+            cv2.rectangle(frame, (x_min, y_min),
+                          (x_min + box_width, y_min + box_height), colour_box_current, 2)
             rects.append([x_min, y_min, x_min + box_width, y_min + box_height])
 
             text_box_current = '{}: {:.4f}'.format(labels[int(class_numbers[i])], confidences[i])
-
+            
             cv2.putText(frame, text_box_current, (x_min, y_min - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, colour_box_current, 2)
 
     return frame, rects
 
 
 def main():
-    camera = cv2.VideoCapture(0)
+    camera = cv2.VideoCapture(1)
     ct = centroidtracker.CentroidTracker()
     h, w = None, None
 

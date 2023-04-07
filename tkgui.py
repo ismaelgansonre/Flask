@@ -7,6 +7,7 @@ from tkinter import filedialog
 from PIL import Image, ImageTk
 
 from YoloCam import draw_boxes_and_labels, load_network, process_frame, read_labels
+from centroidtracker import CentroidTracker
 
 class MainWindow(tk.Tk):
     
@@ -215,28 +216,30 @@ class NewWindow(tk.Toplevel):
 
         # Ouvrir la caméra
         self.camera = cv2.VideoCapture(1)
+        
         # self.camera.set(cv2.CAP_PROP_FRAME_WIDTH, 320)
         # self.camera.set(cv2.CAP_PROP_FRAME_HEIGHT, 240)
 
         self.update_video_frame()
-
+        
     def update_video_frame(self):
+        ct = CentroidTracker()
         ret, frame = self.camera.read()
+        
         if ret:
           results, bounding_boxes, confidences, class_numbers = process_frame(
             frame, self.network, self.layers_names_output, self.probability_minimum, self.threshold)
 
         frame, _ = draw_boxes_and_labels(
             frame, results, bounding_boxes, confidences, class_numbers, self.labels, self.colours)
+        objects = ct.update(_)
+        text_number_car_current = 'Nombre de poulets : {}'.format(len(objects.keys()))
+        cv2.putText(frame, text_number_car_current, (50, 50),
+                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
 
-        # Compter le nombre de poulets détectés
-        poulets = [class_num for class_num in class_numbers if self.labels[class_num] == "poulet"]
-        nombre_de_poulets = len(poulets)
+        cv2.namedWindow('YOLO v4 Détections en Temps Réel', cv2.WINDOW_NORMAL)
+        cv2.imshow('YOLO v4 Détections en Temps Réel', frame)
 
-        # Ajouter le texte sur la vidéo
-        text_number_poulets = 'Nombre de poulets : {}'.format(nombre_de_poulets)
-        cv2.putText(frame, text_number_poulets, (50, 50),
-                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
 
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame_pil = Image.fromarray(frame)
@@ -244,7 +247,7 @@ class NewWindow(tk.Toplevel):
 
         self.label_video.config(image=frame_tk)
         self.label_video.image = frame_tk
-        self.label_nombre_poulets.config(text="Nombre de poulets : {}".format(nombre_de_poulets))
+        self.label_nombre_poulets.config(text="Nombre de poulets : {}".format(text_number_car_current))
 
         self.after(30, self.update_video_frame)
 
