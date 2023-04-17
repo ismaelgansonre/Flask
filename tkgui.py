@@ -86,7 +86,7 @@ class MainWindow(tk.Tk):
         # Getting list with names of all layers from YOLO v4 network
         layers_names_all = network.getLayerNames()
 
-        layers_names_output = [layers_names_all[i[0] - 1] for i in network.getUnconnectedOutLayers()]
+        layers_names_output = [layers_names_all[i - 1] for i in network.getUnconnectedOutLayers()]
 
         probability_minimum = 0.07
         #probability_minimum = 0.00001

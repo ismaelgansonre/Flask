@@ -15,7 +15,7 @@ def read_labels(file_path):
 def load_network(config_path, weights_path):
     network = cv2.dnn.readNetFromDarknet(config_path, weights_path)
     layers_names_all = network.getLayerNames()
-    layers_names_output = [layers_names_all[i[0] - 1] for i in network.getUnconnectedOutLayers()]
+    layers_names_output = [layers_names_all[i - 1] for i in network.getUnconnectedOutLayers()]
 
     return network, layers_names_output
 
