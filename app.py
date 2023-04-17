@@ -65,7 +65,7 @@ def detect_objects(image_BGR):
         weights_file_path = os.path.join(base_dir, 'yolo-pou_mou-data', 'new_yolov4-custom_best.weights')
 
         network = cv2.dnn.readNetFromDarknet(config_file_path, weights_file_path)
-#new_yolov4-custom_best
+        #new_yolov4-custom_best
         # Getting list with names of all layers from YOLO v4 network
         layers_names_all = network.getLayerNames()
 
