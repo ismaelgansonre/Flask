@@ -3,10 +3,15 @@
 Le projet se trouve ici :`https://github.com/JohnRosey/Flask.git`
 
 **Comment le lancer?**
-
+Equipe:
+Audrey Boni
+**Ismaël Gansonre**
+Richard Kodjo
+Fatima Diallo 
+Mariama Diallo
 ---
-
-Faire ` pip install -r requirements.txt` si il y'a une erreur editer le fichier requirements.txt et commenter ou decommenter `opencv-contrib-python-3.4.14.51`
+Vous devez telecharger d'abord ce fichier : `https://github.com/JohnRosey/Flask/raw/main/yolo-pou_mou-data/new_yolov4-custom_best.weights` et le mettre dans le dossier `yolo-pou_mou-data`
+Ensuite creer un environement virtuel avec python 3.x.x et faire ` pip install -r requirements.txt` si il y'a une erreur editer le fichier requirements.txt et commenter ou decommenter `opencv-contrib-python-3.4.14.51`
 
 * [X] Veuillez installer python 3.6-3.9.
 
@@ -100,3 +105,18 @@ result_numero_aleatoire : au niveua de la racine du projet les images uploader q
 # Differences entre Yolo et cnn:
 
 la différence entre YOLO et CNN réside dans leur utilisation et leur objectif. Les CNN sont un type général de réseau de neurones utilisé pour traiter des images et extraire des caractéristiques, tandis que YOLO est un algorithme spécifique de détection d'objets qui utilise un CNN pour effectuer des prédictions rapides et précises des boîtes englobantes et des classes d'objets en une seule passe à travers le réseau.
+
+# Sources et documentations
+
+Lien du dépôt du projet : https://github.com/JohnRosey/Flask.git
+Documentation de Yolov4: Train YOLOv4-tiny on Custom Data - Lightning Fast Object Detection (roboflow.com)
+Détection de poulet intérêts :Healthy and Sick Chicken Detection Dataset > Overview (roboflow.com)
+https://www.dilepix.com/hubfs/pdf/fiche-produit-elevage-Dilepix.pdf?hsLang=fr
+https://www.cscience.ca/2022/07/05/des-algorithmes-dans-les-poulaillers-du-quebec/
+https://www.reussir.fr/volailles/innovation-le-projet-ebroiler-track-doublement-recompense
+https://hal.science/hal-03647294/
+https://www.reussir.fr/volailles/innovation-le-projet-ebroiler-track-doublement-recompense
+https://www.cscience.ca/2022/07/05/des-algorithmes-dans-les-poulaillers-du-quebec/
+
+[2004.10934] YOLOv4: Optimal Speed and Accuracy of Object Detection (arxiv.org)
+
