@@ -1,5 +1,5 @@
 # Utiliser une image de base Python
-FROM python:3.9.16
+FROM python:3.11.5
 
 # Mettre à jour les paquets et installer les dépendances système
 RUN apt-get update && \
